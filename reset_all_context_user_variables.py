@@ -2,8 +2,9 @@ from requests import Session
 from uuid import uuid4
 from json import load
 
-BOT_AUTHORIZATION = 'Key cm91dGVyb3dlbnMxOnBlVWZlQTU3YWVzR1hVS0VQQWRv'
-USER_IDENTITY = '1'
+# Fill with bot authorization key and user identity
+BOT_AUTHORIZATION = ''
+USER_IDENTITY = ''
 
 COMMANDS_URL = 'https://msging.net/commands'
 DELETE_METHOD = 'delete'
@@ -11,7 +12,7 @@ GET_METHOD = 'get'
 
 if BOT_AUTHORIZATION == '' or USER_IDENTITY == '':
     print(
-        'Error : must have a valid bot_authorization key and user_identity.'
+        '[ERROR] Reason: : must have a valid bot_authorization key and user_identity.'
     )
     exit(-1)
 
