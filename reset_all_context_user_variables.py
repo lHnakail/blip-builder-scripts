@@ -2,8 +2,8 @@ from requests import Session
 from uuid import uuid4
 from json import load
 
-BOT_AUTHORIZATION = ''
-USER_IDENTITY = ''
+BOT_AUTHORIZATION = 'Key cm91dGVyb3dlbnMxOnBlVWZlQTU3YWVzR1hVS0VQQWRv'
+USER_IDENTITY = '1'
 
 COMMANDS_URL = 'https://msging.net/commands'
 DELETE_METHOD = 'delete'
@@ -66,4 +66,9 @@ if __name__ == "__main__":
             print(
                 f'[ERROR] Reason: {cmd_res_context["reason"]["description"]}'
             )
-        print('Finished')
+    else:
+        cmd_res_context = cmd_res_context.json()
+        print(
+            f'[ERROR] Reason: {cmd_res_context["description"]}'
+        )
+    print('Finished')
