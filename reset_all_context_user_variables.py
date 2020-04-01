@@ -1,4 +1,4 @@
-from requests import Session
+from blip_session import BlipSession
 from uuid import uuid4
 from json import load
 
@@ -6,9 +6,9 @@ from json import load
 BOT_AUTHORIZATION = ''
 USER_IDENTITY = ''
 
-COMMANDS_URL = 'https://msging.net/commands'
 DELETE_METHOD = 'delete'
 GET_METHOD = 'get'
+
 
 if BOT_AUTHORIZATION == '' or USER_IDENTITY == '':
     print(
@@ -19,7 +19,6 @@ if BOT_AUTHORIZATION == '' or USER_IDENTITY == '':
 
 def create_all_context_request():
     return {
-        'id': str(uuid4()),
         'method': GET_METHOD,
         'to': 'postmaster@msging.net',
         'uri': f'/contexts/{USER_IDENTITY}'
@@ -28,7 +27,6 @@ def create_all_context_request():
 
 def delete_specific_context_variable(context_var):
     return {
-        'id': str(uuid4()),
         'method': DELETE_METHOD,
         'to': 'postmaster@msging.net',
         'uri': f'/contexts/{USER_IDENTITY}/{context_var}'
@@ -36,40 +34,28 @@ def delete_specific_context_variable(context_var):
 
 
 if __name__ == "__main__":
-    session = Session()
-    session.headers = {
-        'Authorization': BOT_AUTHORIZATION
-    }
-    cmd_body_context = create_all_context_request()
+    blipSession = BlipSession(BOT_AUTHORIZATION)
+    res_context = blipSession.process_command(create_all_context_request())
 
-    cmd_res_context = session.post(COMMANDS_URL, json=cmd_body_context)
+    if (res_context.get('status') == 'success'):
 
-    if cmd_res_context.status_code == 200:
-        cmd_res_context = cmd_res_context.json()
+        for context_var in res_context['resource']['items']:
+            res__delete_context = blipSession.process_command(
+                delete_specific_context_variable(context_var))
+            if res__delete_context['status'] == 'success':
+                print(f'Deleted context var :{context_var}')
+            else:
+                print(
+                    f'[ERROR] Reason: {res__delete_context["reason"]["description"]}'
+                )
 
-        if cmd_res_context['status'] == 'success':
-
-            for context_var in cmd_res_context['resource']['items']:
-                cmd_body_delete_context = delete_specific_context_variable(
-                    context_var)
-                cmd_res_delete_context = session.post(
-                    COMMANDS_URL, json=cmd_body_delete_context)
-
-                if cmd_res_delete_context.status_code == 200:
-                    cmd_res_delete_context = cmd_res_delete_context.json()
-                    if cmd_res_delete_context['status'] == 'success':
-                        print(f'Deleted context var :{context_var}')
-                else:
-                    print(
-                        f'[ERROR] Reason: {cmd_res_delete_context["reason"]["description"]}'
-                    )
-        else:
-            print(
-                f'[ERROR] Reason: {cmd_res_context["reason"]["description"]}'
-            )
-    else:
-        cmd_res_context = cmd_res_context.json()
+        print('Finished')
+        exit(-1)
+    if (res_context.get('status') == 'failure'):
         print(
-            f'[ERROR] Reason: {cmd_res_context["description"]}'
+            f'[ERROR] Reason: {res_context["reason"]["description"]}\nFinished'
         )
-    print('Finished')
+    else:
+        print(
+            f'[ERROR] Reason: {res_context["description"]}\nFinished'
+        )
