@@ -1,9 +1,7 @@
 from blip_session import BlipSession
-from uuid import uuid4
-from json import load
 
 # Fill with bot authorization key and user identity
-BOT_AUTHORIZATION = ''
+BOT_AUTHORIZATION/ = ''
 USER_IDENTITY = ''
 
 DELETE_METHOD = 'delete'
