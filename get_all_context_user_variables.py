@@ -15,7 +15,7 @@ if BOT_AUTHORIZATION == '' or USER_IDENTITY == '':
     exit(-1)
 
 
-def create_all_context_request():
+def get_all_context_request():
     return {
         'method': GET_METHOD,
         'to': 'postmaster@msging.net',
@@ -33,7 +33,7 @@ def get_specific_data_context_request(context_var):
 
 if __name__ == "__main__":
     blipSession = BlipSession(BOT_AUTHORIZATION)
-    res_context = blipSession.process_command(create_all_context_request())
+    res_context = blipSession.process_command(get_all_context_request())
     jsonResponse = {}
 
     if (res_context.get('status') == 'success'):
